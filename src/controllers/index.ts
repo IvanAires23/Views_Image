@@ -1,43 +1,35 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
-import { fileManager, genAi } from '../utils/geminiAI';
-import fs from 'fs';
+import service from '../service';
+import httpStatus from 'http-status';
+
+
 export const uploadImage = async (req: Request, res: Response) => {
     try {
-        const { base64Image } = req.body;
+        const { base64Image, customer_code, measure_datetime, measure_type } = req.body;
 
-        const base64Regex = /^data:image\/(jpeg|jpg|png);base64,/;
-        if (!base64Regex.test(base64Image)) {
-            console.error("Formato Base64 inválido.");
-            return;
+        if (!base64Image || !customer_code || !measure_datetime || !measure_type) {
+            return res.status(httpStatus.BAD_REQUEST).send({
+                error_code: "INVALID_DATA",
+                error_description: "Todos os parâmetros são obrigatórios."
+            });
         }
-        const buffer = Buffer.from(base64Image.replace(base64Regex, ''), 'base64');
-        const tempFilePath = 'temp_image.jpg'; // Você pode usar .png se sua imagem for PNG
-        await fs.promises.writeFile(tempFilePath, buffer);
-        // Remove a parte do cabeçalho de dados da imagem
-        // Realiza o upload da imagem em Base64
-        const file = await fileManager.uploadFile(tempFilePath, {
-            mimeType: "image/jpeg", // ou "image/png" dependendo da sua imagem
-            displayName: 'Jetpack drawing',
+
+        if (measure_type !== "WATER" && measure_type !== "GAS") {
+            return res.status(httpStatus.BAD_REQUEST).send({
+                error_code: "INVALID_DATA",
+                error_description: "measure_type deve ser 'WATER' ou 'GAS'."
+            });
+        }
+
+        const data = await service.uploadService(measure_type, measure_datetime, customer_code, base64Image)
+
+        return res.status(200).send({
+            image_url: data.fileUri,
+            measure_value: data.measure_value,
+            measure_uuid: data.measure_uuid
         });
 
-        const model = genAi.getGenerativeModel({
-            model: "gemini-1.5-pro",
-        });
-
-        const result = await model.generateContent([
-            {
-                fileData: {
-                    mimeType: file.file.mimeType,
-                    fileUri: file.file.uri
-                }
-            },
-            { text: "Describe how this product might be manufactured." },
-        ]);
-        return res.status(200).send(result.response.text())
     } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({ error: 'Failed to process the image' });
+        return res.status(500).send(error);
     }
 };
