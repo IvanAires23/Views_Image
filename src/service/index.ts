@@ -3,23 +3,18 @@ import { fileManager, genAi } from '../utils/geminiAI';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { invalidData, readingAlreadyDone } from '../errors';
+import readingsDatabase from '../utils/readingDatabase';
 
-const readingsDatabase: { [key: string]: { measure_type: string, measure_datetime: Date } } = {};
 
 async function uploadService(measure_type: string, measure_datetime: string, customer_code: string, base64Image: string) {
-    const currentMonth = new Date(measure_datetime).getMonth();
-    const existingReading = readingsDatabase[`${customer_code}-${measure_type}-${currentMonth}`];
+    const existingReading = readingsDatabase[`${customer_code}`];
 
     if (existingReading) {
         throw readingAlreadyDone()
     }
 
-    const base64Regex = /^data:image\/(jpeg|jpg|png);base64,/;
-    if (!base64Regex.test(base64Image)) {
-        throw invalidData()
-    }
 
-    const buffer = Buffer.from(base64Image.replace(base64Regex, ''), 'base64');
+    const buffer = Buffer.from(base64Image, 'base64');
     const tempFilePath = 'temp_image.jpg';
     await fs.promises.writeFile(tempFilePath, buffer);
 
@@ -38,13 +33,15 @@ async function uploadService(measure_type: string, measure_datetime: string, cus
                 fileUri: file.file.uri
             }
         },
-        { text: "Descreva como esse produto pode ser fabricado." }
+        { text: "Gere um valor aleatorio com base na imagem, exemplo: 100, 250. Gere apenas esse valor, não faça comentarios" }
     ]);
 
     const measure_value = parseInt(result.response.text(), 10);;
     const measure_uuid = uuidv4();
 
-    readingsDatabase[`${customer_code}-${measure_type}-${currentMonth}`] = {
+    readingsDatabase[`${customer_code}`] = {
+        image_url: file.file.uri,
+        customer_code,
         measure_type,
         measure_datetime: new Date(measure_datetime)
     };
