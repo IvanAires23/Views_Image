@@ -6,7 +6,7 @@ import { invalidData, readingAlreadyDone } from '../errors';
 import readingsDatabase from '../utils/readingDatabase';
 
 
-async function uploadService(measure_type: string, measure_datetime: string, customer_code: string, base64Image: string) {
+async function generateReading(measure_type: string, measure_datetime: string, customer_code: string, base64Image: string) {
     const existingReading = readingsDatabase[`${customer_code}`];
 
     if (existingReading) {
@@ -51,6 +51,6 @@ async function uploadService(measure_type: string, measure_datetime: string, cus
     return { measure_uuid, measure_value, fileUri: file.file.uri }
 }
 
-const service = { uploadService }
+const uploadService = { generateReading }
 
-export default service
+export default uploadService
