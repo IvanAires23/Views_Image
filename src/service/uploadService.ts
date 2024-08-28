@@ -13,7 +13,6 @@ async function generateReading(measure_type: string, measure_datetime: string, c
         throw readingAlreadyDone()
     }
 
-
     const buffer = Buffer.from(base64Image, 'base64');
     const tempFilePath = 'temp_image.jpg';
     await fs.promises.writeFile(tempFilePath, buffer);
@@ -39,11 +38,13 @@ async function generateReading(measure_type: string, measure_datetime: string, c
     const measure_value = parseInt(result.response.text(), 10);;
     const measure_uuid = uuidv4();
 
-    readingsDatabase[`${customer_code}`] = {
+    readingsDatabase[`${measure_uuid}`] = {
         image_url: file.file.uri,
         customer_code,
         measure_type,
-        measure_datetime: new Date(measure_datetime)
+        measure_datetime: new Date(measure_datetime),
+        confirmed_value: false,
+        measure_value,
     };
 
     await fs.promises.unlink(tempFilePath);
