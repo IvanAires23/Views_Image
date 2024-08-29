@@ -1,6 +1,6 @@
 import prisma from "../config/database";
 
-function uploadImage(customer_code: string, measure_datetime: Date, measure_type: string, measure_value: number, measure_uuid: string) {
+function uploadImage(customer_code: string, measure_datetime: Date, measure_type: string, measure_value: number, measure_uuid: string, image_url: string) {
     return prisma.user.create({
         data: {
             customer_code,
@@ -8,7 +8,8 @@ function uploadImage(customer_code: string, measure_datetime: Date, measure_type
             measure_type,
             measure_value,
             measure_uuid,
-            confirmed_value: false
+            confirmed_value: false,
+            image_url
         }
     })
 }

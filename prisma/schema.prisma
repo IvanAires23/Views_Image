@@ -15,4 +15,5 @@ model User {
   measure_value Int 
   measure_uuid String
   confirmed_value Boolean
+  image_url String
 }

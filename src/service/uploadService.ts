@@ -9,8 +9,9 @@ import readingRepository from '../repository/readingRepository';
 
 async function generateReading(measure_type: string, measure_datetime: Date, customer_code: string, base64Image: string) {
     const existingReading = await readingRepository.findCustomerCode(customer_code);
+    const month = new Date().getMonth()
 
-    if (existingReading.length == 0) {
+    if (existingReading[0].measure_datetime.getMonth() == month) {
         throw readingAlreadyDone()
     }
 
@@ -39,7 +40,7 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
     const measure_value = parseInt(result.response.text(), 10);
     const measure_uuid = uuidv4();
 
-    await readingRepository.uploadImage(customer_code, measure_datetime, measure_type, measure_value, measure_uuid)
+    await readingRepository.uploadImage(customer_code, measure_datetime, measure_type, measure_value, measure_uuid, file.file.uri)
 
     await fs.promises.unlink(tempFilePath);
 
