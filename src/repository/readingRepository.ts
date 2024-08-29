@@ -42,6 +42,15 @@ function updateReading(measure_value: number, measure_uuid: string) {
     })
 }
 
-const readingRepository = { uploadImage, findCustomerCode, findMeasureUUID, updateReading }
+function findReadingByMeasureType(customer_code: string, measure_type: string) {
+    return prisma.user.findMany({
+        where: {
+            customer_code,
+            measure_type
+        }
+    })
+}
+
+const readingRepository = { uploadImage, findCustomerCode, findMeasureUUID, updateReading, findReadingByMeasureType }
 
 export default readingRepository
