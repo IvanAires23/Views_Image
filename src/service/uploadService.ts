@@ -4,12 +4,13 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { invalidData, readingAlreadyDone } from '../errors';
 import readingsDatabase from '../utils/readingDatabase';
+import readingRepository from '../repository/readingRepository';
 
 
-async function generateReading(measure_type: string, measure_datetime: string, customer_code: string, base64Image: string) {
-    const existingReading = readingsDatabase[`${customer_code}`];
+async function generateReading(measure_type: string, measure_datetime: Date, customer_code: string, base64Image: string) {
+    const existingReading = await readingRepository.findCustomerCode(customer_code);
 
-    if (existingReading) {
+    if (existingReading.length == 0) {
         throw readingAlreadyDone()
     }
 
@@ -35,17 +36,10 @@ async function generateReading(measure_type: string, measure_datetime: string, c
         { text: "Gere um valor aleatorio com base na imagem, exemplo: 100, 250. Gere apenas esse valor, não faça comentarios" }
     ]);
 
-    const measure_value = parseInt(result.response.text(), 10);;
+    const measure_value = parseInt(result.response.text(), 10);
     const measure_uuid = uuidv4();
 
-    readingsDatabase[`${measure_uuid}`] = {
-        image_url: file.file.uri,
-        customer_code,
-        measure_type,
-        measure_datetime: new Date(measure_datetime),
-        confirmed_value: false,
-        measure_value,
-    };
+    await readingRepository.uploadImage(customer_code, measure_datetime, measure_type, measure_value, measure_uuid)
 
     await fs.promises.unlink(tempFilePath);
 
