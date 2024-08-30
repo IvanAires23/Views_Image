@@ -1,6 +1,5 @@
 import { notFoundReading, readingAlreadyConfirmed } from "../errors";
 import readingRepository from "../repository/readingRepository";
-import readingsDatabase from "../utils/readingDatabase";
 
 async function confirmValue(measure_uuid: string, confirmed_value: number) {
     const existingReading = await readingRepository.findMeasureUUID(measure_uuid)

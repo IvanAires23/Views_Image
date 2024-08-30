@@ -18,7 +18,7 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
     const tempFilePath = 'temp_image.jpg';
     await fs.promises.writeFile(tempFilePath, buffer);
 
-    const file = await fileManager.uploadFile(tempFilePath, {
+    const updateFile = await fileManager.uploadFile(tempFilePath, {
         mimeType: "image/jpeg",
     });
 
@@ -29,8 +29,8 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
     const result = await model.generateContent([
         {
             fileData: {
-                mimeType: file.file.mimeType,
-                fileUri: file.file.uri
+                mimeType: updateFile.file.mimeType,
+                fileUri: updateFile.file.uri
             }
         },
         { text: "Gere um valor aleatorio com base na imagem, exemplo: 100, 250. Gere apenas esse valor, não faça comentarios" }
@@ -39,11 +39,17 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
     const measure_value = parseInt(result.response.text(), 10);
     const measure_uuid = uuidv4();
 
-    await readingRepository.uploadImage(customer_code, measure_datetime, measure_type, measure_value, measure_uuid, file.file.uri)
+    await readingRepository.uploadImage(
+        customer_code,
+        measure_datetime,
+        measure_type,
+        measure_value,
+        measure_uuid,
+        updateFile.file.uri)
 
     await fs.promises.unlink(tempFilePath);
 
-    return { measure_uuid, measure_value, fileUri: file.file.uri }
+    return { measure_uuid, measure_value, fileUri: updateFile.file.uri }
 }
 
 const uploadService = { generateReading }
