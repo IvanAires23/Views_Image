@@ -2,16 +2,19 @@
 import { fileManager, genAi } from '../utils/geminiAI';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { invalidData, readingAlreadyDone } from '../errors';
+import { readingAlreadyDone } from '../errors';
 import readingRepository from '../repository/readingRepository';
+import promptGeminiAi from '../utils/prompt';
 
 
 async function generateReading(measure_type: string, measure_datetime: Date, customer_code: string, base64Image: string) {
     const existingReading = await readingRepository.findCustomerCode(customer_code);
-    const month = new Date().getMonth()
+    const month = new Date(measure_datetime).getMonth()
 
-    if (existingReading[0].measure_datetime.getMonth() == month) {
-        throw readingAlreadyDone()
+    if (existingReading.length >= 1) {
+        existingReading.forEach(reading => {
+            if (reading.measure_datetime.getMonth() == month) throw readingAlreadyDone()
+        })
     }
 
     const buffer = Buffer.from(base64Image, 'base64');
@@ -33,11 +36,12 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
                 fileUri: updateFile.file.uri
             }
         },
-        { text: "Gere um valor aleatorio com base na imagem, exemplo: 100, 250. Gere apenas esse valor, não faça comentarios" }
+        { text: promptGeminiAi }
     ]);
 
-    const measure_value = parseInt(result.response.text(), 10);
+    const measure_value = parseFloat(result.response.text().replace(/\./g, '').replace(',', '.'))
     const measure_uuid = uuidv4();
+
 
     await readingRepository.uploadImage(
         customer_code,
