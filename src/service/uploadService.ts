@@ -3,7 +3,6 @@ import { fileManager, genAi } from '../utils/geminiAI';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { invalidData, readingAlreadyDone } from '../errors';
-import readingsDatabase from '../utils/readingDatabase';
 import readingRepository from '../repository/readingRepository';
 
 

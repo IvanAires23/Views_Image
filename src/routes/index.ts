@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import uploadController from '../controllers/uploadController';
-import { validateBody, validateParams } from '../middlewares/validationBody';
+import { validateBody, validateParams } from '../middlewares/validationMiddleware';
 import { updateSchema } from '../schemas/schemaUpdate';
 import { confirmSchema } from '../schemas/schemaConfirm';
 import confirmController from '../controllers/confirmController';

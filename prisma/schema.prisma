@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Reading {
   id    Int     @id @default(autoincrement())
   measure_type String
   measure_datetime DateTime
@@ -16,4 +16,6 @@ model User {
   measure_uuid String
   confirmed_value Boolean
   image_url String
+
+  @@map("readings")
 }

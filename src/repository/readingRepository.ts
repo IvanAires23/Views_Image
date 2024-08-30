@@ -1,7 +1,7 @@
 import prisma from "../config/database";
 
 function uploadImage(customer_code: string, measure_datetime: Date, measure_type: string, measure_value: number, measure_uuid: string, image_url: string) {
-    return prisma.user.create({
+    return prisma.reading.create({
         data: {
             customer_code,
             measure_datetime,
@@ -15,7 +15,7 @@ function uploadImage(customer_code: string, measure_datetime: Date, measure_type
 }
 
 function findCustomerCode(customer_code: string) {
-    return prisma.user.findMany({
+    return prisma.reading.findMany({
         where: {
             customer_code
         }
@@ -23,7 +23,7 @@ function findCustomerCode(customer_code: string) {
 }
 
 function findMeasureUUID(measure_uuid: string) {
-    return prisma.user.findMany({
+    return prisma.reading.findMany({
         where: {
             measure_uuid
         }
@@ -31,7 +31,7 @@ function findMeasureUUID(measure_uuid: string) {
 }
 
 function updateReading(measure_value: number, measure_uuid: string) {
-    return prisma.user.updateMany({
+    return prisma.reading.updateMany({
         data: {
             confirmed_value: true,
             measure_value
@@ -43,7 +43,7 @@ function updateReading(measure_value: number, measure_uuid: string) {
 }
 
 function findReadingByMeasureType(customer_code: string, measure_type: string) {
-    return prisma.user.findMany({
+    return prisma.reading.findMany({
         where: {
             customer_code,
             measure_type
