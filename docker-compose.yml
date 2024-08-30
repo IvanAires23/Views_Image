@@ -1,8 +1,27 @@
-version: '3'
 services:
-  app:
-    build: .
+  postgres:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - .env
     ports:
-      - "4000:4000"
-    environment:
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      - 5433:5432
+    volumes:
+      - pg-shopper-volume:/var/lib/postgresql/data
+    networks:
+      - shopper-network
+  shopper:
+    build: .
+    container_name: shopper
+    ports:
+      - 4000:4000
+    env_file:
+      - .env
+    networks:
+      - shopper-network
+    depends_on:
+      - postgres
+networks:
+  shopper-network:
+volumes:
+  pg-shopper-volume:

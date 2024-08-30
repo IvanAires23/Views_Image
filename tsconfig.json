@@ -1,13 +1,14 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "commonjs",
-      "strict": true,
-      "esModuleInterop": true,
-      "outDir": "./dist",
-      "rootDir": "./src"
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
-  }
-  
+  "compilerOptions": {
+    "target": "ESNext",           // Pode ser 'ES6' ou 'ESNext'
+    "module": "commonjs",        // Use 'commonjs' para compatibilidade
+    "outDir": "./dist",          // Diretório de saída
+    "rootDir": "./src",          // Diretório raiz do código fonte
+    "esModuleInterop": true,      // Compatibilidade com módulos
+    "strict": true,               // Habilitar verificações estritas
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],        // Inclui todos os arquivos TypeScript na pasta src
+  "exclude": ["node_modules"]    // Exclui a pasta node_modules
+}
