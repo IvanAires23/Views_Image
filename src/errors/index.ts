@@ -1,5 +1,18 @@
+export class AppError extends Error {
+    public status: number;
+    public error_code: any;
+
+    constructor(message: string, status: number, error_code: any) {
+        super(message);
+        this.status = status;
+        this.error_code = error_code;
+        this.name = this.constructor.name;
+        Error.captureStackTrace(this, this.constructor);
+    }
+}
+
 export function readingAlreadyDone() {
-    return { error_code: 'DOUBLE_REPORT', error_description: "Leitura do mês já realizada" }
+    throw new AppError("Leitura do mês já realizada", 400, "DOUBLE_REPORT")
 }
 
 export function invalidData() {
@@ -7,13 +20,9 @@ export function invalidData() {
 }
 
 export function notFoundReading() {
-    return {
-        error_code: 'MEASURE_NOT_FOUND', error_description: 'Leitura não encontrada'
-    }
+    throw new AppError("Leitura não encontrada", 404, "MEASURE_NOT_FOUND")
 }
 
 export function readingAlreadyConfirmed() {
-    return {
-        error_code: "CONFIRMATION_DUPLICATE", error_description: "Leitura do mês já realizada"
-    }
+    throw new AppError("Leitura do mês já confirmada", 409, "CONFIRMATION_DUPLICATE")
 }

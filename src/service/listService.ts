@@ -14,7 +14,7 @@ async function getListReadings(customer_code: string, measure_type?: any) {
         await readingRepository.findReadingByMeasureType(customer_code, measure_type) :
         await readingRepository.findCustomerCode(customer_code)
 
-    if (existingReading.length == 0) throw notFoundReading()
+    if (existingReading.length == 0) notFoundReading()
 
     const measure: ReadingModel[] = []
 

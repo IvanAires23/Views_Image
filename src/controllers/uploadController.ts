@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import uploadService from '../service/uploadService';
+import { AppError } from '../errors/index';
 
 const uploadImage = async (req: Request, res: Response) => {
     try {
@@ -16,6 +17,12 @@ const uploadImage = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.log(error);
+        if (error instanceof AppError) {
+            return res.status(error.status).send({
+                error_description: error.message,
+                error_code: error.error_code
+            });
+        }
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
     }
 };

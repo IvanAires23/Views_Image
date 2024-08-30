@@ -13,7 +13,7 @@ async function generateReading(measure_type: string, measure_datetime: Date, cus
 
     if (existingReading.length >= 1) {
         existingReading.forEach(reading => {
-            if (reading.measure_datetime.getMonth() == month) throw readingAlreadyDone()
+            if (reading.measure_datetime.getMonth() == month) readingAlreadyDone()
         })
     }
 
