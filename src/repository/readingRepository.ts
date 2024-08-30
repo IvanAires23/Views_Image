@@ -46,7 +46,10 @@ function findReadingByMeasureType(customer_code: string, measure_type: string) {
     return prisma.reading.findMany({
         where: {
             customer_code,
-            measure_type
+            measure_type: {
+                equals: measure_type,
+                mode: 'insensitive'
+            }
         }
     })
 }

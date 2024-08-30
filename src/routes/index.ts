@@ -11,6 +11,6 @@ const router = Router();
 
 router.post('/upload', validateBody(updateSchema), uploadController.uploadImage);
 router.patch('/confirm', validateBody(confirmSchema), confirmController.confirmPatch);
-router.patch('/:customer_code/list', validateParams(listSchema), listController.getListReadings);
+router.get('/:customer_code/list', validateParams(listSchema), listController.getListReadings);
 
 export default router;
