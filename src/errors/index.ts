@@ -12,15 +12,15 @@ export class AppError extends Error {
 }
 
 export function readingAlreadyDone() {
-    throw new AppError("Leitura do mês já realizada", 400, "DOUBLE_REPORT")
+    throw new AppError("Leitura do mês já realizada", 409, "DOUBLE_REPORT")
 }
 
 export function invalidData() {
-    return { error_code: 'badRequest', error_description: 'Formato Base64 inválido' }
+    throw new AppError("Tipo de medição não permitida", 400, "INVALID_TYPE")
 }
 
 export function notFoundReading() {
-    throw new AppError("Leitura não encontrada", 404, "MEASURE_NOT_FOUND")
+    throw new AppError("Nenhuma leitura encontrada", 404, "MEASURE_NOT_FOUND")
 }
 
 export function readingAlreadyConfirmed() {

@@ -1,4 +1,4 @@
-import { notFoundReading } from "../errors";
+import { invalidData, notFoundReading } from "../errors";
 import readingRepository from "../repository/readingRepository";
 
 type ReadingModel = {
@@ -10,6 +10,9 @@ type ReadingModel = {
 }
 
 async function getListReadings(customer_code: string, measure_type?: any) {
+
+    if (measure_type && (measure_type !== 'WATER' || measure_type !== 'GAS')) invalidData()
+
     const existingReading = measure_type ?
         await readingRepository.findReadingByMeasureType(customer_code, measure_type) :
         await readingRepository.findCustomerCode(customer_code)
