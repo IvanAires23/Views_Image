@@ -11,7 +11,7 @@ type ReadingModel = {
 
 async function getListReadings(customer_code: string, measure_type?: any) {
 
-    if (measure_type && (measure_type.toUpperCase() !== 'WATER' || measure_type.toUpperCase() !== 'GAS')) invalidData()
+    if (measure_type && (measure_type.toUpperCase() !== 'WATER' && measure_type.toUpperCase() !== 'GAS')) invalidData()
 
     const existingReading = measure_type ?
         await readingRepository.findReadingByMeasureType(customer_code, measure_type) :

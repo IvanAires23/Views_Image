@@ -14,6 +14,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.get('/health', (req, res) => {
+    res.send("I'm Ok!")
+})
 app.use('/', router);
 
 app.listen(PORT, () => {
